@@ -71,28 +71,9 @@ public class StockInfoRemoteViewsService extends RemoteViewsService {
                 }
                 RemoteViews views = new RemoteViews(getPackageName(),
                         R.layout.list_item_quote);
-                /*
-                int weatherId = dataCursor.getInt(Contract.Quote.POSITION_ID);
-                String description = data.getString(INDEX_WEATHER_DESC);
-                long dateInMillis = data.getLong(INDEX_WEATHER_DATE);
-                String formattedDate = Utility.getFriendlyDayString(
-                        DetailWidgetRemoteViewsService.this, dateInMillis, false);
-                double maxTemp = data.getDouble(INDEX_WEATHER_MAX_TEMP);
-                double minTemp = data.getDouble(INDEX_WEATHER_MIN_TEMP);
-                String formattedMaxTemperature =
-                        Utility.formatTemperature(DetailWidgetRemoteViewsService.this, maxTemp);
-                String formattedMinTemperature =
-                        Utility.formatTemperature(DetailWidgetRemoteViewsService.this, minTemp);
-                if (weatherArtImage != null) {
-                    views.setImageViewBitmap(R.id.widget_icon, weatherArtImage);
-                } else {
-                    views.setImageViewResource(R.id.widget_icon, weatherArtResourceId);
-                }
+               /*
 
-                views.setTextViewText(R.id.widget_date, formattedDate);
-                views.setTextViewText(R.id.widget_description, description);
-                views.setTextViewText(R.id.widget_high_temperature, formattedMaxTemperature);
-                views.setTextViewText(R.id.widget_low_temperature, formattedMinTemperature);
+
 
                 final Intent fillInIntent = new Intent();
                 String locationSetting =

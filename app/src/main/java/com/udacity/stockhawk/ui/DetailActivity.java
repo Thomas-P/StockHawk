@@ -3,6 +3,7 @@ package com.udacity.stockhawk.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -17,6 +18,8 @@ import java.util.List;
 
 import yahoofinance.histquotes.HistoricalQuote;
 
+import static com.udacity.stockhawk.ui.MainActivity.DETAIL_INTENT_KEY;
+
 public class DetailActivity extends AppCompatActivity implements LoadHistory.Callback {
 
     private LineChart chart;
@@ -29,10 +32,15 @@ public class DetailActivity extends AppCompatActivity implements LoadHistory.Cal
 
         chart = (LineChart) findViewById(R.id.chart);
         Intent intent = getIntent();
-        symbol = intent.getStringExtra(MainActivity.DETAIL_INTENT_KEY);
-        setTitle(symbol);
+        if (intent == null || intent.hasExtra(DETAIL_INTENT_KEY)) {
+            Toast.makeText(this, R.string.error_no_id_given, Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            symbol = intent.getStringExtra(DETAIL_INTENT_KEY);
+            setTitle(symbol);
 
-        new LoadHistory(this).execute(symbol);
+            new LoadHistory(this).execute(symbol);
+        }
     }
 
 

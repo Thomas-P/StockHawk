@@ -38,6 +38,7 @@
     <!-- Stock not Found Error, shown as a toast -->
     <string name="error_message_stock_not_found">The stock <xliffig id="stock_name">%s</xliffig> is not available.</string>
     <string name="error_no_stock_data">No Stock history data available.</string>
+    <string name="error_no_id_given">No Id is given for detail view.</string>
 
     <string name="widget_detail_label">Stock Info</string>
     <string name="list_no_stocks">No Stocks chosen.</string>
