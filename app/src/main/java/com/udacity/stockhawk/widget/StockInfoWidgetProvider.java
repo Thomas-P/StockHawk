@@ -40,6 +40,7 @@ public class StockInfoWidgetProvider extends AppWidgetProvider {
 
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
         }
     }
 

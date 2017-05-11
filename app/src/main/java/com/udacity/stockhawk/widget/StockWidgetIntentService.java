@@ -54,6 +54,7 @@ public class StockWidgetIntentService extends IntentService {
 
             // Tell the AppWidgetManager to perform an update on the current app com.udacity.stockhawk.widget
             appWidgetManager.updateAppWidget(appWidgetId, views);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
         }
 
     }
