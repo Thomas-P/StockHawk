@@ -32,7 +32,7 @@ public class DetailActivity extends AppCompatActivity implements LoadHistory.Cal
 
         chart = (LineChart) findViewById(R.id.chart);
         Intent intent = getIntent();
-        if (intent == null || intent.hasExtra(DETAIL_INTENT_KEY)) {
+        if (intent == null || intent.hasExtra(DETAIL_INTENT_KEY) == false) {
             Toast.makeText(this, R.string.error_no_id_given, Toast.LENGTH_LONG).show();
             finish();
         } else {
