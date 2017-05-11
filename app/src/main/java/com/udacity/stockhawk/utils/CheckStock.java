@@ -23,7 +23,7 @@ public class CheckStock extends AsyncTask<String, Void, String> {
             Stock stock = YahooFinance.get(params[0]);
             return stock.getName() != null ? stock.getSymbol() : null;
 
-        } catch (IOException e) {
+        } catch (IOException|StringIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
         return null;

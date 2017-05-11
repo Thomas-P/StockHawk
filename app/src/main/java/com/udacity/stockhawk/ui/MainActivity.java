@@ -29,6 +29,8 @@ import com.udacity.stockhawk.utils.CheckStock;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.udacity.stockhawk.sync.QuoteSyncJob.ACTION_DATA_UPDATED;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
         StockAdapter.StockAdapterOnClickHandler {
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String symbol = adapter.getSymbolAtPosition(viewHolder.getAdapterPosition());
                 PrefUtils.removeStock(MainActivity.this, symbol);
                 getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
+                Intent dataUpdated = new Intent(ACTION_DATA_UPDATED);
+                getApplicationContext().sendBroadcast(dataUpdated);
             }
         }).attachToRecyclerView(stockRecyclerView);
 
@@ -134,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     if (stockSymbol != null && !stockSymbol.isEmpty()) {
                         PrefUtils.addStock(MainActivity.this, stockSymbol);
                         QuoteSyncJob.syncImmediately(MainActivity.this);
+                        Intent dataUpdated = new Intent(ACTION_DATA_UPDATED);
+                        getApplicationContext().sendBroadcast(dataUpdated);
                     } else {
                         Toast.makeText(MainActivity.this, getString(R.string.error_message_stock_not_found, symbol), Toast.LENGTH_LONG).show();
                         swipeRefreshLayout.setRefreshing(false);
