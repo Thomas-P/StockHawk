@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         SwipeRefreshLayout.OnRefreshListener,
         StockAdapter.StockAdapterOnClickHandler {
     public static final String DETAIL_INTENT_KEY = "STOCK_SYMBOL";
-    private static final int STOCK_LOADER = 0;
+    private static final int STOCK_LOADER = 9965;
+    private static final int CHECK_LOADER = 84743;
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.recycler_view)
     RecyclerView stockRecyclerView;
@@ -47,7 +48,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView error;
     private StockAdapter adapter;
 
-    @Override
+
+    private LoaderManager.LoaderCallbacks<String> checkLoadCallback = new LoaderManager.LoaderCallbacks<String>() {
+        private String symbol;
+
+        @Override
+        public Loader<String> onCreateLoader(int id, Bundle args) {
+            this.symbol = args.getString(DETAIL_INTENT_KEY);
+            return new CheckStock(MainActivity.this, symbol);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<String> loader, String stockSymbol) {
+            swipeRefreshLayout.setRefreshing(false);
+            if (stockSymbol != null && !stockSymbol.isEmpty()) {
+                PrefUtils.addStock(MainActivity.this, stockSymbol);
+                QuoteSyncJob.syncImmediately(MainActivity.this);
+                Intent dataUpdated = new Intent(ACTION_DATA_UPDATED);
+                getApplicationContext().sendBroadcast(dataUpdated);
+            } else {
+                Toast.makeText(MainActivity.this, getString(R.string.error_message_stock_not_found, symbol), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<String> loader) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    };
+
     public void onClick(String symbol) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DETAIL_INTENT_KEY, symbol);
@@ -132,22 +161,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
-            new CheckStock(new CheckStock.Callback() {
-                @Override
-                public void onCheck(String stockSymbol) {
-                    if (stockSymbol != null && !stockSymbol.isEmpty()) {
-                        PrefUtils.addStock(MainActivity.this, stockSymbol);
-                        QuoteSyncJob.syncImmediately(MainActivity.this);
-                        Intent dataUpdated = new Intent(ACTION_DATA_UPDATED);
-                        getApplicationContext().sendBroadcast(dataUpdated);
-                    } else {
-                        Toast.makeText(MainActivity.this, getString(R.string.error_message_stock_not_found, symbol), Toast.LENGTH_LONG).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }
-            }).execute(symbol);
-
-
+            Bundle bundle = new Bundle();
+            bundle.putString(DETAIL_INTENT_KEY, symbol);
+            getSupportLoaderManager().restartLoader(CHECK_LOADER, bundle, checkLoadCallback);
         }
     }
 
@@ -158,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Contract.Quote.QUOTE_COLUMNS.toArray(new String[]{}),
                 null, null, Contract.Quote.COLUMN_SYMBOL);
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
